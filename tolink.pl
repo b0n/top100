@@ -8,6 +8,67 @@ use Data::Dumper;
 use HTML::SimpleLinkExtor;
 use URI;
 
+my @all_urls;       # top100 urls
+my @all_domains;    # top100 domains
+my $urls = undef;   # urls from top100 pages
+
+open FH, "< a1.txt";
+@all_domains = <FH>;
+close FH;
+chomp for @all_domains;
+
+open FH, "< a.txt";
+@all_urls = <FH>;
+close FH;
+chomp for @all_urls;
+
+foreach my $row (@all_urls) {
+    my (undef ,$url) = split "\t", $row;
+    my $u = URI->new($url);
+    my $normalize_url = $u->scheme . "://" . $u->host;
+
+    print $url . "\n";
+
+    my $html = get $url;
+    next unless $html;
+
+    my $extor = HTML::SimpleLinkExtor->new();
+    $extor->parse($html);
+    my @links = $extor->schemes('https', 'http');
+
+    foreach my $link (@links) {
+        #print "--\n";
+        #print "$_\n";
+        my $u = URI->new($link);
+        #print "scheme:" . $u->scheme . "\n";
+        #print "opaque:" . $u->opaque . "\n";
+        #print "path:" . $u->path . "\n";
+        #print "fragment:" .$u->fragment . "\n" if defined $u->fragment;
+        #print "as_string:" .$u->as_string . "\n";
+        #print "canonical:" .$u->canonical . "\n";
+        #print "authority:" .$u->authority . "\n";
+        #print "userinfo:" .$u->userinfo . "\n" if defined $u->userinfo;
+        #print "host:" .$u->host . "\n";
+        next if ($u->path =~ /\.((js)|(css)|(jpg)|(gif)|(rdf)|(xml)|(ico)|(rss)|(pdf))$/i); 
+        #print $u->path . "\n";
+        #$u->path =~ /.*\.(.*)$/;
+        #$ext->{$1} = $u->path if defined $1;
+        my $domain = $u->scheme . "://" . $u->host;
+        next if ($domain eq $normalize_url);
+        $urls->{$normalize_url} = $domain;
+        print " $domain\n";
+    }
+}
+
+open FH, ">>a2.txt";
+foreach my $url (keys %{$urls}) {
+    print $url . "\t" . $urls->{$url} . "\n";
+    print FH $url . "\t" . $urls->{$url} . "\n";
+}
+close FH;
+=pod
+exit;
+
 chomp;
 #print "> $_\n";
 
@@ -84,3 +145,4 @@ if (ref $urls) {
     close FH;
     #print "$_\n" for sort keys %{$urls};
 }
+=cut
