@@ -1,0 +1,16 @@
+キーワードの上位ページの島を発見する
+
+top100.pl a1.txt キーワードの上位ページを取得
+tolink.pl a2.txt キーワードの上位ページからのリンクを取得
+backlink.pl a3.txt キーワードの上位ページへのリンクを取得
+
+$ perl top100.pl キーワード => a.txt                上位100を取得
+    a.txt 上位サイト100
+    a1.txt 正規化されたドメイン
+$ perl -n tolink.pl a.txt > a2.txt                  外向きのリンクを取得
+    a2.txt 正規化されたドメインの外向きのリンク
+$ perl -n backlink.pl a.txt > a3.txt                内向きのリンクを取得
+    a3.txt 正規化されたドメインの内向きのリンク
+$ perl alldomain.pl => all.txt
+    a1,txt a2.txt a3.txt をマージ
+$ perl graphviz.pl > dot.dot
