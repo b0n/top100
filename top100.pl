@@ -29,7 +29,7 @@ our %param = (
 my @param = map{ "$_=$param{$_}"; } keys %param;
 my $param = join "&", @param;
 
-my $apikey = "ieh982uxg66DBTVVVz6tSiC06JudM3fFIcKot9dLiTxIn15CaIWjq.i6bAOO1qHydaODgq66zJqlEA--";
+my $apikey = "sample";
 our $url = "http://search.yahooapis.jp/WebSearchService/V1/webSearch?appid=$apikey&query=$escaped_keyword&results=$param{results}";
 our $limit = 100;
 
